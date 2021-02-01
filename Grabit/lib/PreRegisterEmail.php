@@ -7,7 +7,7 @@ class PreRegisterEmail extends PreRegister {
 		//メール本文で使う文字列
 		$name = self::name;
 		$course = self::course;
-		$url = self::getUrlToken;
+		$url =self::getUrlToken;
 		//メールの構成情報を設定する
 		$to = self::$email ;
 		$subject = '【ホンネで中学受験サービス】：メールアドレス確認のお知らせ';

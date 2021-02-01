@@ -93,7 +93,7 @@ class PreRegister {
 			self::$login_id = $login_id;
 			return True;
 		} else {
-			throw new Exception('idは６文字以上の半角英数で入力してください。');
+			throw new Exception('idは６文字以上の半角英数字で入力してください。');
 			return False;
 		}
 	}
