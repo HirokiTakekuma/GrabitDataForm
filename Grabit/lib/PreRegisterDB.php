@@ -3,10 +3,6 @@ namespace Grabit;
 
 class PreRegisterDB extends PreRegister {
 
-	public static $errors;
-
-	public static $result;
-
 	public static $rawdata;
 
 	public static function checkRawdata() :bool {
@@ -14,35 +10,34 @@ class PreRegisterDB extends PreRegister {
 	}
 
 
-//dont duplicate=> True, duplicate => False
 	public static function duplicateCheck() :bool {
 		global $wpdb;
 		self::$rawdata = [];
 
-		//use id & email to import $rawdata from DB
+		//use email to import $rawdata from DB
 
-		self::$rawdata[] = $wpdb->get_results($wpdb->prepare(
-			"SELECT * FROM $wpdb->contracts WHERE id = %s OR email = %s", self::login_id, self::email),
+		self::$rawdata['guardian'] = $wpdb->get_results($wpdb->prepare(
+			"SELECT * FROM $wpdb->my_guardian WHERE email = %s", self::email),
 			 ARRAY_A
 			);
 
-		self::$rawdata[] = $wpdb->get_results($wpdb->prepare(
-			"SELECT * FROM $wpdb->preregister WHERE id = %s OR email = %s", self::login_id, self::email),
+		self::$rawdata['preregister'] = $wpdb->get_results($wpdb->prepare(
+			"SELECT * FROM $wpdb->my_preregister WHERE email = %s", self::email),
 			ARRAY_A
 		);
 
-		if ( self::$rawdata[0] ) {
+		if ( self::$rawdata['guardian'] ) {
 			return False;
 		} else {
-			if ( array_key_exists("login_id", self::$rawdata[1]) ) {
-				return self::$rawdata[1]['authentication'] === 0;
-			} elseif ( self::$rawdata[1] ) {
-				for ($i = 0, $len = count(self::$rawdata[1]); $i<$len; $i++) {
-					if (self::$rawdata[1][i]['authentication'] === 1) {
+			if ( array_key_exists("id", self::$rawdata['preregister']) ) {
+				return self::$rawdata['preregister']['authentication'] === 0;
+			} elseif ( self::$rawdata['preregister'] ) {
+				for ($i = 0, $len = count(self::$rawdata['preregister']); $i<$len; $i++) {
+					if (self::$rawdata['preregister'][i]['authentication'] === 1) {
 						return False;
 					}
-				return True;
 				}
+				return True;
 			}
 		}
 
@@ -56,14 +51,12 @@ class PreRegisterDB extends PreRegister {
 				'my_preregister',
 				array(
 					'course' => self::$course,
-					'login_id' => self::$login_id,
-					'login_pw' => self::$login_pw,
-					'name' => self::$name,
-					'name_yomigana' => self::$name_yomigana,
 					'phone' => self::$phone,
 					'email' => self::$email,
-					'address' => self::$address,
+					'user_pass' => self::$user_pass,
 					'hash' => self::$hash,
+					'authentication' => self::$authentication,
+					'paid' => self::$paid,
 				),
 			);
 
@@ -72,7 +65,7 @@ class PreRegisterDB extends PreRegister {
 			} elseif  (self::$result === false) {
 				echo '登録に失敗しました';
 				echo "エラー：{$e->show_errors()}";
-				echo 'もう一度<a href="'.home_url().'">こちら</a>から登録申請をお願いします。';
+				echo 'もう一度<a href="'.esc_url(home_url('/preregister')).'">こちら</a>から登録申請をお願いします。';
 				return False;
 			} else {
 				echo '予期せぬエラーが起きました';
@@ -90,7 +83,7 @@ class PreRegisterDB extends PreRegister {
 
 		global $wpdb;
 		self::$rawdata = $wpdb->get_results( $wpdb->prepare(
-		 "SELECT * FROM $wpdb->my_preregister WHERE email = %s AND hash = %s AND date > (NOW() - INTERVAL 1 DAY)", self::email, self::hash),
+		 "SELECT * FROM $wpdb->my_preregister WHERE email = %s AND hash = %s AND date > (NOW() - INTERVAL 1 DAY)", self::$email, self::$hash),
 		 ARRAY_A
 		);
 
@@ -100,11 +93,7 @@ class PreRegisterDB extends PreRegister {
 			return False;
 		} else {
 			if (array_key_exists('course', self::$rawdata)) {
-				if(self::setProperties(self::$rawdata)) {
-					return True;
-				} else {
-					return False;
-				}
+				return self::setProperties(self::$rawdata);
 			} elseif (is_array(self::$rawdata)) {
 				for ($i=0, $len=count(self::$rawdata); $i<$len ;$i++) {
 					if (self::checkArray($rawdata[$i])) {

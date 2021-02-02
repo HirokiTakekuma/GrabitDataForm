@@ -1,7 +1,7 @@
 <?php
 class Contract {
 
-	private $id
+	private $id;
 
 	private $course;
 

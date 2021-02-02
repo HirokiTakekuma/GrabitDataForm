@@ -1,9 +1,13 @@
 <?php
 class Guardian {
-
+//Guardian table上の番号
 	private $id;
+//WP_Userオブジェクトのid
+	private $wp_id;
 
-	private $pw;
+	private $user_name;
+
+	private $user_pass;
 
 	private $first_name;
 
@@ -17,11 +21,10 @@ class Guardian {
 
 	private $email;
 
-	private $contract = new Contract();
-
+	private $contracts = [];
 
 	public function setId(string $id) {
-		if (preg_match("/^[a-zA-Z0-9]+$/", $login_id) && strlen($login_id) > 6) {
+		if (preg_match("/^[a-zA-Z0-9]+$/", $id)) {
 			$this->id = $id;
 			return True;
 		} else {
@@ -104,9 +107,9 @@ class Guardian {
 		}
 	}
 
-	public function setContract(Contract $contract) {
+	public function setContracts(Contract $contract) {
 		if($this->id === $contract->guardian_id) {
-			$this->contract = $contract;
+			$this->contracts[] = $contract;
 			return True;
 		} else {
 			throw new Exception('Contract_id does not match');

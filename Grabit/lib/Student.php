@@ -1,13 +1,15 @@
 <?php
 class Student {
 
+	private $id;
+
 	private $first_name;
 
 	private $last_name;
 
-	private $first_name_yomi;
+	private $first_name_yomigana;
 
-	private $last_name_yomi;
+	private $last_name_yomigana
 
 	private $birth_date;
 
@@ -20,7 +22,6 @@ class Student {
 	private $score;
 
 	private $note;
-
 
 	public function setFirst_name(string $name):bool {
 
