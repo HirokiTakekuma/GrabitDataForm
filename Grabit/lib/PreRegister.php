@@ -1,7 +1,4 @@
 <?php
-
-namespace Grabit;
-
 class PreRegister {
 
 	public static $course;
@@ -32,8 +29,8 @@ class PreRegister {
 
 	public static function setPhone(string $phone):bool {
 		if(preg_match("/^[0-9]+$/", $phone)) {
-			return True;
 			self::$phone = $phone;
+			return True;
 		} else {
 			throw new Exception('電話番号は数字で入力してください。');
 			return False;
@@ -60,25 +57,36 @@ class PreRegister {
 		}
 	}
 
-	public function setHash(string $hash) {
+	public static function setHash(string $hash) {
 		self::$hash = $hash;
 	}
 
+	public static function setAuthentication(string $authentication) {
+		self::$authentication = $authentication;
+	}
 
-	public static function nakeHash() {
+	public static function setPaid(string $paid) {
+		self::$paid = $paid;
+	}
+
+
+	public static function makeHash() {
 		$seed = uniqid('honnedechujuservicehasaikou');
 		self::$hash = hash('sha256', $seed);
 	}
 
 	public static function getUrlToken() {
-		$preregistered_url = home_url('/preregister/');
-		$url = $preregistered_url .'?url_token='.self::$hash;
+		$preregistered_url = home_url('/preregistered/');
+		$url = $preregistered_url .'?my_authentication=false'.'?url_token='.self::$hash;
 		return $url;
 	}
 
 	public static function checkProperties() {
-		foreach (self as $key => $value) {
-			if (!isset($value)) {
+		$array = get_class_vars(__CLASS__);
+		var_dump($array);
+		foreach ($array as $key => $value) {
+			if ($value === null) {
+				echo $key;
 				return false;
 			}
 		}
@@ -88,9 +96,14 @@ class PreRegister {
 	public static function setProperties(array $array) {
 		if (array_key_exists('course', $array)) {
 			foreach ($array as $key => $value) {
+				var_dump($key);
 				switch ($key) {
+					case 'id' :
+						break;
 					case 'course' :
 						self::setCourse($value);
+						break;
+					case 'date' :
 						break;
 					case 'phone' :
 						self::setPhone($value);
