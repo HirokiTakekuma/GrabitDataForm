@@ -5,56 +5,63 @@ class Contract {
 
 	private $course;
 
-	private $timestamp = new DateTime();
+	private $registrationDate = new DateTime();
 
-	private $student_id;
+	//WP_Userオブジェクトからプロパティをセットする
+	public function __construct(WP_User $wp_user) {
+		$id = $wp_user->id;
+		$array = $this->getContractFromDB($wp_user->id);
+		$this->setContractFromArray($array);
+	}
 
-	private $guardian_id;
-
-	public function setCourse(string $course) {
-		$courses = ['質問回答','内部コンテンツ',];
-		if (in_array($course, $courses)) {
-			$this->course = $course;
-			return True;
-		} else {
-			throw new Exception('Contractの$courseプロパティ');
+	//連想配列からプロパティを更新する
+	public function setContractFromArray($ascArray) {
+		$error = [];
+		foreach($result as $key => $value) {
+			switch ($key) {
+				case 'id':
+					$this->id = $value;
+					break;
+				case 'course':
+					$this->course = $value;
+					break;
+				case 'registrationDate':
+					$this->registrationDate = $value
+					break;
+				default:
+				//ここでエラーが発生する
+					$error[$key] = $value
+					break;
+			}
 		}
 	}
 
-	public function setTimestamp(DateTime $timestamp) {
-		$sevice_start = new DateTime();
-		$service_start->setDate(2020, 8, 1);
-		if ($timestamp > $service_start) {
-			$this->timestamp = $timestamp;
-			return True;
+	//WP_Userオブジェクトの$idから、DBの情報を連想配列で返す
+	private static function getContractFromDB($id) {
+		global $wpdb;
+		$rawdata = $wpdb->get_row($wpdb->prepare(
+		 "SELECT * FROM $wpdb->my_Contract WHERE id = %d", $id),
+		 ARRAY_A
+		);
+		if($rawdata === null) {
+			//ここでエラーが発生する
 		} else {
-			throw new Exception('Contractの$timestampプロパティ');
-			return False;
+			return $rawdata;
 		}
 	}
 
-	public function setLogin_id(string $login_id) {
-		if (preg_match("/^[a-zA-Z0-9]+$/", $login_id) && strlen($login_id) > 6) {
-			$this->login_id = $login_id;
-			return True;
-		} else {
-			throw new Exception('Contractの$login_idプロパティ');
-			return False;
-		}
+	//インスタンスのプロバティを返す
+	public function getId() {
+		return $this->id;
 	}
 
-	public function setLogin_pw(string $login_pw) {
-		if(preg_match("/^[a-zA-Z0-9]+$/", $login_id) && strlen($login_id) > 8) {
-			$this->login_pw = $login_pw;
-			return True;
-		} else {
-			throw new Exception('Contractの$login_pwプロパティ');
-			return False;
-		}
+	public function getCourse() {
+		return $this->course;
 	}
 
-
-
+	public function getRegistrationDate() {
+		return $this->registrationDate;
+	}
 
 
 }

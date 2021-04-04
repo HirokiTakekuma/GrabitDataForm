@@ -3,25 +3,71 @@ class Student {
 
 	private $id;
 
-	private $first_name;
-
-	private $last_name;
-
-	private $first_name_yomigana;
-
-	private $last_name_yomigana
-
-	private $birth_date;
-
 	private $grade;
 
 	private $gender;
+
+	private $name;
 
 	private $cram;
 
 	private $score;
 
 	private $note;
+
+	//Contractオブジェクトから、DBの情報をプロパティにセットする
+
+	public function __construct(Contract $contract) {
+		$this->setContract($contract->id);
+	}
+
+	//Contractオブジェクトの$idから、DBの情報をプロパティにセットする
+	public function setContract($id) {
+	}
+
+	public function setId($id) {
+	}
+
+	public function setGrade($id) {
+	}
+
+	public function setGender($id) {
+	}
+
+	public function setName($id) {
+	}
+
+	public function setCram($id) {
+	}
+
+	public function setScore($id) {
+	}
+
+	public function setNote($id) {
+	}
+
+	//インスタンスのプロパティを返す
+
+	public function getId() {
+	}
+
+	public function getGrade() {
+	}
+
+	public function getGender() {
+	}
+
+	public function getName() {
+	}
+
+	public function getCram() {
+	}
+
+	public function getScore() {
+	}
+
+	public function getNote() {
+	}
 
 	public function setFirst_name(string $name):bool {
 
